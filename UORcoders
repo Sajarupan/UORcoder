@@ -93,7 +93,7 @@ public class UORcoders extends BravoBot
 			ahead(100);
 		}
 		if (e.getBearing() > -10 && e.getBearing() < 10) {
-			fire(3);
+			fire(30);
 		}
 		if (e.isMyFault()) {
 			turnRight(10);
