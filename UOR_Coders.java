@@ -1,147 +1,75 @@
-/**
- * Copyright (c) 2001-2019 Mathew A. Nelson and Robocode contributors
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * https://robocode.sourceforge.io/license/epl-v10.html
- */
-package sample;
 
+import robocode.*;
+import java.awt.Color;
 
-import robocode.DeathEvent;
-import robocode.Robot;
-import robocode.ScannedRobotEvent;
-import static robocode.util.Utils.normalRelativeAngleDegrees;
-
-import java.awt.*;
-
+// API help : http://robocode.sourceforge.net/docs/robocode/robocode/Robot.html
 
 /**
- * Corners - a sample robot by Mathew Nelson.
- * <p>
- * This robot moves to a corner, then swings the gun back and forth.
- * If it dies, it tries a new corner in the next round.
- *
- * @author Mathew A. Nelson (original)
- * @author Flemming N. Larsen (contributor)
+ * ASD - a robot by (your name here)
  */
-public class Corners extends AlphaBot {
-	int others; // Number of other robots in the game
-	static int corner = 0; // Which corner we are currently using
-	// static so that it keeps it between rounds.
-	boolean stopWhenSeeRobot = false; // See goCorner()
-
+public class UORcoder extends AlphaBot
+{
 	/**
-	 * run:  Corners' main run function.
+	 * run: ASD's default behavior
 	 */
 	public void run() {
-		// Set colors
-		setBodyColor(Color.red);
-		setGunColor(Color.black);
-		setRadarColor(Color.yellow);
-		setBulletColor(Color.green);
-		setScanColor(Color.green);
+		// Initialization of the robot should be put here
 
-		// Save # of other bots
-		others = getOthers();
+		// After trying out your robot, try uncommenting the import at the top,
+		// and the next line:
 
-		// Move to a corner
-		goCorner();
+		 setColors(Color.red,Color.blue,Color.green); // body,gun,radar
 
-		// Initialize gun turn speed to 3
-		int gunIncrement = 3;
-
-		// Spin gun back and forth
-		while (true) {
-			for (int i = 0; i < 30; i++) {
-				turnGunLeft(gunIncrement);
-			}
-			gunIncrement *= -1;
+		// Robot main loop
+		while(true) {
+			// Replace the next 4 lines with any behavior you would like
+			ahead(100);
+			turnGunRight(360);
+			back(100);
+			turnGunRight(360);
 		}
 	}
 
 	/**
-	 * goCorner:  A very inefficient way to get to a corner.  Can you do better?
+	 * onScannedRobot: What to do when you see another robot
 	 */
-	public void goCorner() {
-		// We don't want to stop when we're just turning...
-		stopWhenSeeRobot = false;
-		// turn to face the wall to the "right" of our desired corner.
-		turnRight(normalRelativeAngleDegrees(corner - getHeading()));
-		// Ok, now we don't want to crash into any robot in our way...
-		stopWhenSeeRobot = true;
-		// Move to that wall
-		ahead(5000);
-		// Turn to face the corner
-		turnLeft(90);
-		// Move to the corner
-		ahead(5000);
-		// Turn gun to starting point
-		turnGunLeft(90);
+	public double getDistance()	
+	{
+		return 2.0;
 	}
 
-	/**
-	 * onScannedRobot:  Stop and fire!
-	 */
 	public void onScannedRobot(ScannedRobotEvent e) {
-		// Should we stop, or just fire?
-		if (stopWhenSeeRobot) {
-			// Stop everything!  You can safely call stop multiple times.
-			stop();
-			// Call our custom firing method
-			smartFire(e.getDistance());
-			// Look for another robot.
-			// NOTE:  If you call scan() inside onScannedRobot, and it sees a robot,
-			// the game will interrupt the event handler and start it over
-			scan();
-			// We won't get here if we saw another robot.
-			// Okay, we didn't see another robot... start moving or turning again.
-			resume();
-		} else {
-			smartFire(e.getDistance());
-		}
+		// Replace the next line with any behavior you would like
+		fire(1);
 	}
 
 	/**
-	 * smartFire:  Custom fire method that determines firepower based on distance.
-	 *
-	 * @param robotDistance the distance to the robot to fire at
+	 * onHitByBullet: What to do when you're hit by a bullet
 	 */
-	public void smartFire(double robotDistance) {
-		if (robotDistance > 200 || getEnergy() < 15) {
-			fire(1);
-		} else if (robotDistance > 50) {
-			fire(2);
-		} else {
+	public void onHitByBullet(HitByBulletEvent e) {
+		// Replace the next line with any behavior you would like
+		if (getDistance() <100)
+		{
 			fire(3);
 		}
-	}
-
-	/**
-	 * onDeath:  We died.  Decide whether to try a different corner next game.
-	 */
-	public void onDeath(DeathEvent e) {
-		// Well, others should never be 0, but better safe than sorry.
-		if (others == 0) {
-			return;
+		else
+		{
+			fire(1);
 		}
-
-		// If 75% of the robots are still alive when we die, we'll switch corners.
-		if ((others - getOthers()) / (double) others < .75) {
-			corner += 90;
-			if (corner == 270) {
-				corner = -90;
-			}
-			out.println("I died and did poorly... switching corner to " + corner);
-		} else {
-			out.println("I died but did well.  I will still use corner " + corner);
-		}
+		
+		back(10);
 	}
 	
-		Robot robot = new Robot();
-		while (working)
-			robot.keyRelease(KeyEvent.VK_ALT);
-			robot.keyRelease(KeyEvent.VK_TAB);
-			frame.requestFocus();
-			try { Thread.sleep(10); } catch(Exception) {}
+	/**
+	 * onHitWall: What to do when you hit a wall
+	 */
+	public void onHitWall(HitWallEvent event) {
+		// Replace the next line with any behavior you would like
+		out.println("Ouch, I hit a wall bearing "+event.getBearing()+"degrees.");
+		back(20);
+	}	
+	public void setColors(Color bodyColor,
+                      Color gunColor,
+                      Color radarColor){}
+				                      
 }
