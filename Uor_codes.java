@@ -1,4 +1,3 @@
-package pkg;
 import robocode.*;
 import robocode.HitByBulletEvent;
 import robocode.HitRobotEvent;
